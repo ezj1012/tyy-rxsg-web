@@ -1,16 +1,18 @@
 <template>
   <div class="game-main">
-    <UserPlane class="main-user-plane"></UserPlane>
-    <BtnPlane class="main-btn-plane"></BtnPlane>
+    <UserPlane v-show="false" class="main-user-plane"></UserPlane>
+    <BtnPlane v-show="false" class="main-btn-plane"></BtnPlane>
+    <OuterCityPlane class="main-gaming-plane"></OuterCityPlane>
   </div>
 </template>
 <script>
 import UserPlane from "./userPlane";
 import BtnPlane from "./btnPlane";
+import OuterCityPlane from "./outercityPlane";
 
 export default {
   name: "RxsgMain",
-  components: { UserPlane, BtnPlane },
+  components: { UserPlane, BtnPlane, OuterCityPlane },
   props: {},
   data() {
     return {};
@@ -25,7 +27,8 @@ export default {
   position: relative;
   width: 1000px;
   height: 600px;
-  background: url("./bj.jpg");
+  // background: url("./bj.jpg");
+  user-select: none;
   .main-user-plane {
     position: absolute;
     width: 263px;
@@ -36,6 +39,13 @@ export default {
     position: absolute;
     left: 263px;
     // background-color: #ffff2fcf;
+    z-index: 300;
+  }
+  .main-gaming-plane {
+    position: absolute;
+    background-color: red;
+    left: 263px;
+    z-index: 10;
   }
 }
 </style>

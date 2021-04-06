@@ -2,9 +2,9 @@
   <div id="app">
     <!-- <WorldMap v-model="province" style="margin: 20px"></WorldMap> -->
     <Main></Main>
-    <Login style="margin-top:10px"></Login>
-    <RegisterPlayer style="margin-top:10px"></RegisterPlayer>
-    <div style="width: 800px; height: 30px">
+    <Login  v-show="show" style="margin-top:10px"></Login>
+    <RegisterPlayer  v-show="show" style="margin-top:10px"></RegisterPlayer>
+    <div  v-show="show" style="width: 800px; height: 30px">
       <RedButton
         style="float: left; margin-left: 30px"
         content="注册账号"
@@ -14,9 +14,9 @@
         content="登陆游戏"
       ></RedButton>
     </div>
-    <RSelect :list="list" v-model="selectValue"></RSelect>
+    <RSelect  v-show="show" :list="list" v-model="selectValue"></RSelect>
     {{ selectValue }}
-    <div style="width: 800px; height: 30px">
+    <div  v-show="show" style="width: 800px; height: 30px">
       <Input style="width: 200px" v-model="username" placeholder="表名称" />
       <Input
         style="float: left; margin-left: 30px"
@@ -24,7 +24,7 @@
         placeholder="和前面一页"
       />
     </div>
-    <div style="width: 200px; height: 30px">
+    <div v-show="show" style="width: 200px; height: 30px">
       <RButton
         style="float: left"
         :bg="preBg"
@@ -42,7 +42,7 @@
       <Radio v-model="select" style="float: left; margin-left: 30px"></Radio>
       <Radio v-model="select" style="float: left; margin-left: 30px"></Radio>
     </div>
-    <Sprite :img="liangzhou"></Sprite>
+    <Sprite  v-show="show" :img="liangzhou"></Sprite>
   </div>
 </template>
 <script>
@@ -74,6 +74,7 @@ export default {
   },
   data() {
     return {
+      show:false,
       list: [
         { value: "aaaaaa" },
         { value: "bbbbbb" },
