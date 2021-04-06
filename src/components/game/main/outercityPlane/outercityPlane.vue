@@ -7,31 +7,19 @@
     @mousemove="mouseMove"
   >
     <div class="outercity-main">
-      <div class="outercity-main-show">{{ showMsg }}</div>
-      <div
-        class="outercity-main-terrains"
-        :style="{ left: sceneX + 'px', top: sceneY + 'px' }"
-      >
-        <div
-          class="terrain"
-          v-for="(item, idx) in terrains"
-          :key="idx"
-          :style="{ left: item.left + 'px', top: item.top + 'px' }"
-        >
-          {{ idx }} {{ item.idx }}
-        </div>
-      </div>
+      <Inner></Inner>
     </div>
   </div>
 </template>
 <script>
 // import RButton from "@/components/rxsg/button";
 // import RadioButton from "@/components/rxsg/radioButton";
-import land from "../../../../assets/rxsg/main/outercity/terrain_land.png";
+import land from "../../../../assets/rxsg/main/outercity/land.png";
+import Inner from "./inner";
 
 export default {
   name: "OuterCityPlane",
-  components: {},
+  components: { Inner },
   props: {},
   data() {
     return {
@@ -298,6 +286,7 @@ export default {
         width: 107px;
         height: 75px;
         background-color: #7272617f;
+        background: url("../../../../assets/rxsg/main/outercity/land.png");
       }
     }
   }

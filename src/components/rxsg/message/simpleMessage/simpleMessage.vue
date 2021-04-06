@@ -7,12 +7,17 @@
       left: left,
     }"
   >
-    {{ message }}
+    <div v-if="message !== undefined && message !== ''">
+      {{ message }}
+    </div>
+    <div v-else>
+      <slot></slot>
+    </div>
   </div>
 </template>
 <script >
 export default {
-  name: "RButton",
+  name: "SimpleMessage",
   components: {},
   props: {
     message: {
