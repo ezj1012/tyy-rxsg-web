@@ -1,9 +1,7 @@
 <template>
   <div
     class="rxsg-outercity-plane"
-    @mousedown="mouseDown"
     @mouseleave="mouseLeave"
-    @mouseup="mouseUp"
     @mousemove="mouseMove"
   >
     <div class="outercity-main">

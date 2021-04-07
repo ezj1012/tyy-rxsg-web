@@ -1,6 +1,8 @@
 <template>
   <div
     class="rxsg-outercity-inner"
+    @mousedown="mouseDown"
+    @mouseup="mouseUp"
     @mousemove="mouseMove"
     @mouseleave="mouseLeave"
   >
@@ -92,6 +94,8 @@ export default {
       terrains: [],
       terrainsX: [],
       terrainsY: [],
+      pressing: false,
+      moving: false,
     };
   },
   mounted: function () {
@@ -132,12 +136,36 @@ export default {
       this.imageData = id;
     },
     mouseMove(e) {
-      let box = this.$el.getBoundingClientRect();
-      let x = e.x - box.x;
-      let y = e.y - box.y;
-      console.log(x + " " + y);
+      if (this.pressing) {
+        //TODO 移动地图
+        let box = this.$el.getBoundingClientRect();
+        let x = e.x - box.x;
+        let y = e.y - box.y;
+        console.log("moving x:" + x + " y:" + y);
+        console.log(box);
+      } else {
+        // hover操作
+        let box = this.$el.getBoundingClientRect();
+        let x = e.x - box.x;
+        let y = e.y - box.y;
+        console.log("hoving x:" + x + " y:" + y);
+      }
     },
-    mouseLeave() {},
+    mouseLeave() {
+      console.log("mouseLeave");
+      this.moving = false;
+      this.pressing = false;
+    },
+    mouseDown() {
+      this.moving = true;
+      this.pressing = true;
+      console.log(
+        "mouseDown" + " moving:" + this.moving + " pressing" + this.pressing
+      );
+    },
+    mouseUp() {
+      this.pressing = false;
+    },
   },
   computed: {},
   directives: {},
