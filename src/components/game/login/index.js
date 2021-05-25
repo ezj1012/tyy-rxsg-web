@@ -1,2 +1,2 @@
-import Login from './login.vue';
-export default Login;
+import GameLogin from './gameLogin.vue';
+export default GameLogin;

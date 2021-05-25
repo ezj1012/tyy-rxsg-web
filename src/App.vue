@@ -1,15 +1,16 @@
 <template>
   <div id="app">
-    <Login v-show="show" style="margin-top: 10px"></Login>
+    <router-link to="/login">Go to login</router-link>
+    <router-link to="/gaming">Go to gaming</router-link>
+    <router-link to="/">Go to home</router-link>
+    <router-view></router-view>
   </div>
 </template>
 <script>
-import Login from "@/components/game/login";
 import appState from "@/utils/appStateManager";
 
 export default {
   components: {
-    Login,
   },
   data() {
     return {

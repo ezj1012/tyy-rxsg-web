@@ -14,7 +14,7 @@
       content="注册账号"
       :click="doRegister"
     ></RButton>
-    <RButton class="login-login" content="登陆游戏"></RButton>
+    <RButton class="login-login" content="登陆游戏" :click="doLogin"></RButton>
     <Card class="login-billboard" width="280" height="300">
       <div class="login-billboard-title">热血公告</div>
       <div class="login-billboard-main">
@@ -43,9 +43,10 @@ import Radio from "@/components/rxsg/radio";
 import RButton from "@/components/rxsg/redButton";
 import Card from "@/components/rxsg/card";
 import RUser from "./rUser";
+import axios from "axios";
 
 export default {
-  name: "Login",
+  name: "GameLogin",
   components: { RInput, Radio, RButton, Card, RUser },
   props: {
     value: {
@@ -72,6 +73,29 @@ export default {
     doRegister: function () {
       console.log("eEEEEEEEEEEEEEEEEEEEEEE");
       this.reOpen = true;
+    },
+    doLogin: function () {
+      // axios
+      let params = {
+        username: this.username,
+        password: this.passwd,
+        rememberMe: this.rePasswd,
+      };
+      axios
+        .post("./authentication/form", params, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((res) => {
+          console.log(res);
+        });
+
+      console.log("bbbbbbbbbbbbbbbbbbbbbb");
+      console.log(axios);
     },
   },
   watch: {},
