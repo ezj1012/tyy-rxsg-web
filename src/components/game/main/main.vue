@@ -1,7 +1,7 @@
 <template>
   <div class="game-main">
-    <UserPlane v-show="false" class="main-user-plane"></UserPlane>
-    <BtnPlane v-show="false" class="main-btn-plane"></BtnPlane>
+    <UserPlane v-show="true" class="main-user-plane"></UserPlane>
+    <BtnPlane v-show="true" class="main-btn-plane"></BtnPlane>
     <OuterCityPlane class="main-gaming-plane"></OuterCityPlane>
   </div>
 </template>

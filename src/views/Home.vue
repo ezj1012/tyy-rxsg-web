@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <h1>hello world!!!</h1>
-  </div>
+  <RxsgMain></RxsgMain>
 </template>
 
 <script>
+import RxsgMain from "@/components/game/main";
+
 export default {
   name: "Home",
-  components: {},
+  components: { RxsgMain },
   data() {
     return {};
   },

@@ -2,10 +2,13 @@ module.exports = {
   publicPath: "./",
   devServer: {
     proxy: {
-      '/api': {
-        target: 'http://tyy/rxsg',
+      '/sanguo': {
+        target: 'http://127.0.0.1/sanguo',
         ws: true,
-        changeOrigin: true
+        changeOrigin: true,
+        pathRewrite: {
+          '^/sanguo': ''
+        }
       }
     }
   }

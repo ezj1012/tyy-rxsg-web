@@ -7,13 +7,19 @@
       class="rxsg-card-main"
       :style="{ backgroundColor: backgroundColor }"
     >
+      <div class="rxsg-card-title">
+        <Title :msg="title" />
+      </div>
+
       <slot></slot>
     </div>
   </div>
 </template>
 <script>
+import Title from "@/components/rxsg/title";
 export default {
-  name: "Card",
+  name: "Card2",
+  components: { Title },
   props: {
     width: {
       type: [String, Number],
@@ -28,8 +34,12 @@ export default {
       default: "transparent",
     },
     span: {
-      type: [String, Number],
+      type: [Number],
       default: 2,
+    },
+    title: {
+      type: String,
+      default: "",
     },
   },
   data() {
@@ -45,9 +55,8 @@ export default {
   methods: {
     setW: function (newVal) {
       let span = this.span * 2;
-      if (!isNaN(newVal)) {
+      if (typeof newVal === "number") {
         this.w = newVal - span + "px";
-        console.log(newVal, this.w);
       } else if (newVal == null) {
         this.w = `calc(100% - ${span}px)`;
       } else {
@@ -56,7 +65,7 @@ export default {
     },
     setH: function (newVal) {
       let span = this.span * 2;
-      if (!isNaN(newVal)) {
+      if (typeof newVal === "number") {
         this.h = newVal - span + "px";
       } else if (newVal == null) {
         this.h = `calc(100% - ${span}px)`;
@@ -77,6 +86,7 @@ export default {
 </script>
 <style lang="less">
 .rxsg-card {
+  position: relative;
   border-top: 2px solid #735942;
   border-left: 2px solid #735942;
   border-right: 2px solid #6f685b;
@@ -88,10 +98,17 @@ export default {
     border-bottom: 2px solid #3c3023;
     width: calc(100% - 4px);
     height: calc(100% - 4px);
+    .rxsg-card-title {
+      position: relative;
+      padding-top: 10px;
+      width: 100%;
+      height: 45px;
+    }
   }
 }
 
 .rxsg-card-1 {
+  position: relative;
   border-top: 1px solid #735942;
   border-left: 1px solid #735942;
   border-right: 1px solid #6f685b;
@@ -104,6 +121,12 @@ export default {
     border-bottom: 1px solid #3c3023;
     width: calc(100% - 2px);
     height: calc(100% - 2px);
+    .rxsg-card-title {
+      position: relative;
+      padding-top: 10px;
+      width: 100%;
+      height: 45px;
+    }
   }
 }
 </style>
