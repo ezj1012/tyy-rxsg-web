@@ -9,9 +9,7 @@
   ></div>
 </template>
 <script>
-import sd from "../../../assets/rxsg/button/radio_selected.png";
-import unsd from "../../../assets/rxsg/button/radio_unselected.png";
-import unsdo from "../../../assets/rxsg/button/radio_unselected_over.png";
+import { buttonIcon } from "../../../assets/cfg.js";
 
 export default {
   name: "Radio",
@@ -29,11 +27,11 @@ export default {
   data() {
     return {
       selected: false,
-      curBg: unsd,
+      curBg: buttonIcon.radioBg.unselected,
       hover: false,
-      defaultBg: "url(" + unsd + ") ",
-      sdBg: "url(" + sd + ") ",
-      hoverBg: "url(" + unsdo + ") ",
+      defaultBg: buttonIcon.radioBg.unselected,
+      sdBg: buttonIcon.radioBg.selected,
+      hoverBg: buttonIcon.radioBg.unselected_over,
     };
   },
   mounted: function () {

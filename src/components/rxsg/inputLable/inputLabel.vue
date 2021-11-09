@@ -34,5 +34,6 @@ export default {
   border: 1px solid #423224;
   box-shadow: inset 0 0 1px 1px #725841;
   padding-left: 6px;
+  user-select: none;
 }
 </style>
