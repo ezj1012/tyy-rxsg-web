@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <Gaming />
+    <router-view></router-view>
   </div>
 </template>
 <script>
-import Gaming from "./views/Gaming.vue";
+// import Gaming from "./views/Gaming.vue";
 
 import appState from "@/utils/appStateManager";
 
 export default {
-  components: { Gaming },
+  components: {},
   data() {
     return {
       appState: appState,
@@ -27,6 +27,8 @@ html,
 body {
   padding: 0px;
   margin: 0;
+  width: 100%;
+  height: 100%;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -34,8 +36,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #000;
+  width: 100%;
+  height: 100%;
 }
-
 
 ::-webkit-scrollbar {
   width: 16px;
