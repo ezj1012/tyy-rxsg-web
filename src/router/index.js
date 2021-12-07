@@ -4,6 +4,8 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Gaming from '../views/Gaming.vue'
 import Admin from '../views/Admin.vue'
+import Coder from '../components/admin/coder/Coder.vue'
+import Module from '../components/admin/coder/Module.vue'
 
 Vue.use(VueRouter)
 
@@ -24,7 +26,19 @@ const routes = [
   }, {
     path: '/admin',
     name: 'admin',
-    component: Admin
+    component: Admin,
+    children: [
+      {
+        path: 'coder',
+        name: 'coder',
+        component: Coder
+      },
+      {
+        path: 'module/:id',
+        name: 'moduleInfo',
+        component: Module
+      }
+    ]
   }
 ]
 
