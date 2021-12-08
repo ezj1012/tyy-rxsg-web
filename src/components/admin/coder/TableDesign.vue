@@ -1,0 +1,327 @@
+<template>
+  <el-container id="coderTableDesign">
+    <el-aside class="controls" width="250px">
+      <div class="controlGroup">
+        <span>常用控件</span>
+        <div class="controlItems">
+          <div
+            class="controlItem"
+            draggable="true"
+            @dragstart="tryDrag"
+            @dragend="tryDragend"
+          >
+            名称
+          </div>
+          <div class="controlItem" draggable="true" @dragstart="tryDrag">描述</div>
+          <div class="controlItem" draggable="true" @dragstart="tryDrag">引用ID</div>
+          <div class="controlItem" draggable="true" @dragstart="tryDrag">引用字段</div>
+        </div>
+      </div>
+    </el-aside>
+    <el-main style="padding: 0px">
+      <el-row class="design-row" style="" v-for="(rowItem, idx) in designList" :key="idx">
+        <template v-for="(item, idx2) in rowItem">
+          <el-col :key="idx2" class="design-item" :span="item.span * 6">
+            <div></div>
+          </el-col>
+        </template>
+      </el-row>
+    </el-main>
+    <el-aside width="300px">
+      <!-- 表详情 -->
+      <el-card :body-style="{ padding: '10px' }">
+        <div slot="header">
+          <span>表详情</span>
+        </div>
+        <el-form
+          ref="tableInfo"
+          :model="table.edit.info"
+          :rules="table.edit.infoRules"
+          size="mini"
+          label-width="80px"
+        >
+          <el-form-item label="类名" prop="code">
+            <el-input v-model="table.edit.info.code"></el-input>
+          </el-form-item>
+          <el-form-item label="类描述" prop="name">
+            <el-input v-model="table.edit.info.name"></el-input>
+          </el-form-item>
+          <el-form-item label="功能描述">
+            <el-input
+              type="textarea"
+              v-model="table.edit.info.remark"
+              rows="4"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </el-aside>
+  </el-container>
+</template>
+
+<script>
+// import { getTableInfoById } from "@/api/coder.js";
+
+export default {
+  name: "TableDesign",
+  props: {
+    tableInfo: {},
+  },
+  components: {},
+  data() {
+    return {
+      table: {
+        edit: {
+          info: {
+            code: "",
+          },
+          infoRules: {
+            name: [
+              { required: true, message: "请输入类描述", trigger: "blur" },
+              {
+                min: 2,
+                max: 10,
+                message: "长度在 2 到 10 个字符",
+                trigger: "blur",
+              },
+            ],
+            code: [
+              { required: true, message: "请输入类名", trigger: "blur" },
+              {
+                min: 2,
+                max: 20,
+                message: "长度在 2 到 20 个字符",
+                trigger: "blur",
+              },
+            ],
+          },
+        },
+      },
+      design: {
+        list: [],
+      },
+      drag: {
+        draging: false,
+      },
+    };
+  },
+  computed: {
+    designList() {
+      if (!this.tableInfo) {
+        return [];
+      }
+      let columns = this.tableInfo.columns;
+      let result = [];
+      let curRow = [];
+      result.push(curRow);
+      let curSpan = 0;
+      for (let i = 0; i < columns.length; i++) {
+        const col = columns[i];
+        curRow.push(col);
+        if (curSpan + col.span == 4) {
+          curRow = [];
+          result.push(curRow);
+          curSpan = 0;
+        } else if (curSpan + col.span > 4) {
+          // 填充当前行
+          while (curSpan < 4) {
+            curRow.push({
+              span: 1,
+              empty: true,
+            });
+            curSpan++;
+          }
+          curRow = [];
+          result.push(curRow);
+          curSpan = col.span;
+        } else {
+          curSpan += col.span;
+        }
+        if (col.afterNewLine && curSpan != 0) {
+          while (curSpan < 4) {
+            curRow.push({
+              span: 1,
+              empty: true,
+            });
+            curSpan++;
+          }
+          curRow = [];
+          result.push(curRow);
+          curSpan = 0;
+        }
+      }
+
+      while (curSpan < 4) {
+        curRow.push({
+          span: 1,
+          empty: true,
+        });
+        curSpan++;
+      }
+      curSpan = 0;
+
+      let trow = result.length > 6 ? 6 : result.length;
+      for (let i = trow; i < 10; i++) {
+        curRow = [];
+        result.push(curRow);
+        while (curSpan < 4) {
+          curRow.push({
+            span: 1,
+            empty: true,
+          });
+          curSpan++;
+        }
+        curSpan = 0;
+      }
+      return result;
+    },
+  },
+  async mounted() {
+    if (this.tableInfo) {
+      this.table.edit.info = { ...this.tableInfo.table };
+    }
+  },
+  // async beforeUpdate() {
+  // await this.initData();
+  // },
+  watch: {
+    tableInfo() {
+      if (this.tableInfo) {
+        this.table.edit.info = { ...this.tableInfo.table };
+        let columns = this.tableInfo.columns;
+        let row = 0;
+        let curSpan = 0;
+        for (let i = 0; i < columns.length; i++) {
+          const col = columns[i];
+          this.design.list.push(col);
+          if (curSpan + col.span == 4) {
+            row++;
+            curSpan = 0;
+          } else if (curSpan + col.span > 4) {
+            // 填充当前行
+            while (curSpan < 4) {
+              this.design.list.push({
+                span: 1,
+                empty: true,
+              });
+              curSpan++;
+            }
+            row++;
+            curSpan = col.span;
+          } else {
+            curSpan += col.span;
+          }
+          if (col.afterNewLine && curSpan != 0) {
+            while (curSpan < 4) {
+              this.design.list.push({
+                span: 1,
+                empty: true,
+              });
+              curSpan++;
+              curSpan = 0;
+            }
+            row++;
+          }
+        }
+        let trow = row > 6 ? 6 : row;
+        for (let i = trow; i < 7; i++) {
+          while (curSpan < 4) {
+            this.design.list.push({
+              span: 1,
+              empty: true,
+            });
+            curSpan++;
+          }
+          curSpan = 0;
+          row++;
+        }
+        console.log("row:" + row);
+      }
+    },
+  },
+  methods: {
+    async initData() {},
+    tryDrag() {
+      console.log("tryDrag");
+      this.drag.draging = true;
+    },
+    tryDragend() {
+      console.log("tryDragend");
+      this.drag.draging = false;
+    },
+    getDesignInfo() {},
+  },
+};
+</script>
+<style lang="less" scope>
+#coderTableDesign {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  .controls {
+    height: 100%;
+    background-color: #f7f7f7;
+    .controlGroup {
+      span {
+        &:first-child {
+          display: block;
+          padding: 10px;
+        }
+      }
+      .controlItems {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: center;
+
+        .controlItem {
+          width: 100px;
+          margin: 5px;
+          font-size: 12px;
+          border-radius: 3px;
+          padding: 9px 0px;
+          transition: 0.1s;
+          font-weight: 500;
+          display: inline-block;
+          line-height: 1;
+          white-space: nowrap;
+          cursor: pointer;
+          background: #fff;
+          border: 1px solid #dcdfe6;
+          color: #606266;
+          text-align: center;
+          box-sizing: border-box;
+          outline: 0;
+          &:hover {
+            color: #409eff;
+            border-color: #c6e2ff;
+            background-color: #ecf5ff;
+          }
+          &:active {
+            color: #3a8ee6;
+            border-color: #3a8ee6;
+            outline: 0;
+          }
+        }
+      }
+    }
+  }
+  .design-row {
+    margin: 5px 0;
+    height: 80px;
+    &:hover {
+      // background-color: #c6e2ff;
+    }
+    .design-item {
+      height: 100%;
+      padding: 0 2.5px;
+      div:first-child {
+        width: 100%;
+        height: 100%;
+        background-color: #c6e2ff;
+      }
+    }
+  }
+}
+</style>

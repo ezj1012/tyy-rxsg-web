@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import { Message } from 'element-ui';
 /**
  * 进行跳转到登录页面
  */
@@ -14,7 +15,7 @@ axios.defaults.timeout = 120000 // 超时时间
 axios.defaults.baseURL = '/sanguo' // 请求前缀路径
 axios.defaults.headers['Content-Type'] = 'application/json;charset=UTF-8' // 请求前缀路径
 axios.defaults.headers['REQUEST_HEADER'] = 'binary-http-client-header'
- 
+
 // 路由响应拦截
 // http response 拦截器
 axios.interceptors.response.use(
@@ -30,7 +31,7 @@ axios.interceptors.response.use(
         }
       })
     } else if (code > 400) {
-      // Message.error(error.response.data.message)
+      Message.error(error.response.data.message)
     }
   }
 )
