@@ -1,66 +1,89 @@
 <template>
   <el-container id="coderTableDesign">
     <el-aside class="controls" width="250px">
-      <div class="controlGroup">
+      <div v-if="showControlsTemp" class="controlGroup">
         <span>常用控件</span>
         <div class="controlItems">
           <div
+            v-for="(item, idx) in controls.templates"
+            :key="idx"
             class="controlItem"
             draggable="true"
-            @dragstart="tryDrag"
-            @dragend="tryDragend"
+            @dragstart="tryDrag($event, item)"
           >
-            名称
+            {{ item.name }}
           </div>
-          <div class="controlItem" draggable="true" @dragstart="tryDrag">描述</div>
-          <div class="controlItem" draggable="true" @dragstart="tryDrag">引用ID</div>
-          <div class="controlItem" draggable="true" @dragstart="tryDrag">引用字段</div>
+        </div>
+      </div>
+      <div class="controlGroup">
+        <span>默认控件</span>
+        <div class="controlItems">
+          <div
+            v-for="(item, idx) in controls.controls"
+            :key="idx"
+            class="controlItem"
+            draggable="true"
+            @dragstart="tryDrag($event, item)"
+          >
+            {{ item.name }}
+          </div>
         </div>
       </div>
     </el-aside>
     <el-main style="padding: 0px">
+      <el-row>
+        表单设计
+      </el-row>
       <el-row class="design-row" style="" v-for="(rowItem, idx) in designList" :key="idx">
         <template v-for="(item, idx2) in rowItem">
           <el-col :key="idx2" class="design-item" :span="item.span * 6">
-            <div></div>
+            <div
+              @dragover="tryDragover($event, item)"
+              @drop="tryDrop($event, item)"
+            ></div>
           </el-col>
         </template>
       </el-row>
     </el-main>
+    <!-- 编辑详情页 -->
     <el-aside width="300px">
-      <!-- 表详情 -->
-      <el-card :body-style="{ padding: '10px' }">
-        <div slot="header">
-          <span>表详情</span>
-        </div>
-        <el-form
-          ref="tableInfo"
-          :model="table.edit.info"
-          :rules="table.edit.infoRules"
-          size="mini"
-          label-width="80px"
-        >
-          <el-form-item label="类名" prop="code">
-            <el-input v-model="table.edit.info.code"></el-input>
-          </el-form-item>
-          <el-form-item label="类描述" prop="name">
-            <el-input v-model="table.edit.info.name"></el-input>
-          </el-form-item>
-          <el-form-item label="功能描述">
-            <el-input
-              type="textarea"
-              v-model="table.edit.info.remark"
-              rows="4"
-            ></el-input>
-          </el-form-item>
-        </el-form>
-      </el-card>
+      <el-tabs v-loading="loading" v-model="activeName" tabPosition="top">
+        <el-tab-pane style="height: 100%" label="表详情" name="design">
+          <el-card :body-style="{ padding: '10px' }">
+            <div slot="header">
+              <span>表详情</span>
+            </div>
+            <el-form
+              ref="tableInfo"
+              :model="table.edit.info"
+              :rules="table.edit.infoRules"
+              size="mini"
+              label-width="80px"
+            >
+              <el-form-item label="类名" prop="code">
+                <el-input v-model="table.edit.info.code"></el-input>
+              </el-form-item>
+              <el-form-item label="类描述" prop="name">
+                <el-input v-model="table.edit.info.name"></el-input>
+              </el-form-item>
+              <el-form-item label="功能描述">
+                <el-input
+                  type="textarea"
+                  v-model="table.edit.info.remark"
+                  rows="4"
+                ></el-input>
+              </el-form-item>
+            </el-form>
+          </el-card>
+        </el-tab-pane>
+        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+      </el-tabs>
     </el-aside>
   </el-container>
 </template>
 
 <script>
-// import { getTableInfoById } from "@/api/coder.js";
+import { queryControls } from "@/api/coder.js";
 
 export default {
   name: "TableDesign",
@@ -70,6 +93,7 @@ export default {
   components: {},
   data() {
     return {
+      controls: {},
       table: {
         edit: {
           info: {
@@ -107,16 +131,14 @@ export default {
   },
   computed: {
     designList() {
-      if (!this.tableInfo) {
-        return [];
-      }
-      let columns = this.tableInfo.columns;
+      let columns = this.design.list;
       let result = [];
       let curRow = [];
       result.push(curRow);
       let curSpan = 0;
       for (let i = 0; i < columns.length; i++) {
         const col = columns[i];
+        col.scope = (result.length - 1) * 4 + curSpan;
         curRow.push(col);
         if (curSpan + col.span == 4) {
           curRow = [];
@@ -128,11 +150,13 @@ export default {
             curRow.push({
               span: 1,
               empty: true,
+              scope: (result.length - 1) * 4 + curSpan,
             });
             curSpan++;
           }
           curRow = [];
           result.push(curRow);
+          col.scope = (result.length - 1) * 4 + curSpan;
           curSpan = col.span;
         } else {
           curSpan += col.span;
@@ -142,6 +166,7 @@ export default {
             curRow.push({
               span: 1,
               empty: true,
+              scope: (result.length - 1) * 4 + curSpan,
             });
             curSpan++;
           }
@@ -155,6 +180,7 @@ export default {
         curRow.push({
           span: 1,
           empty: true,
+          scope: (result.length - 1) * 4 + curSpan,
         });
         curSpan++;
       }
@@ -168,6 +194,7 @@ export default {
           curRow.push({
             span: 1,
             empty: true,
+            scope: (result.length - 1) * 4 + curSpan,
           });
           curSpan++;
         }
@@ -175,8 +202,12 @@ export default {
       }
       return result;
     },
+    showControlsTemp() {
+      return this.controls.templates != null && this.controls.templates.length > 0;
+    },
   },
   async mounted() {
+    this.controls = await queryControls();
     if (this.tableInfo) {
       this.table.edit.info = { ...this.tableInfo.table };
     }
@@ -189,65 +220,105 @@ export default {
       if (this.tableInfo) {
         this.table.edit.info = { ...this.tableInfo.table };
         let columns = this.tableInfo.columns;
-        let row = 0;
-        let curSpan = 0;
+        this.design.list = [];
         for (let i = 0; i < columns.length; i++) {
-          const col = columns[i];
-          this.design.list.push(col);
-          if (curSpan + col.span == 4) {
-            row++;
-            curSpan = 0;
-          } else if (curSpan + col.span > 4) {
-            // 填充当前行
-            while (curSpan < 4) {
-              this.design.list.push({
-                span: 1,
-                empty: true,
-              });
-              curSpan++;
-            }
-            row++;
-            curSpan = col.span;
-          } else {
-            curSpan += col.span;
-          }
-          if (col.afterNewLine && curSpan != 0) {
-            while (curSpan < 4) {
-              this.design.list.push({
-                span: 1,
-                empty: true,
-              });
-              curSpan++;
-              curSpan = 0;
-            }
-            row++;
+          if (columns[i]["editable"] != 0) {
+            this.design.list.push(columns[i]);
           }
         }
-        let trow = row > 6 ? 6 : row;
-        for (let i = trow; i < 7; i++) {
-          while (curSpan < 4) {
-            this.design.list.push({
-              span: 1,
-              empty: true,
-            });
-            curSpan++;
-          }
-          curSpan = 0;
-          row++;
-        }
-        console.log("row:" + row);
+
+        // let row = 0;
+        // let curSpan = 0;
+        // for (let i = 0; i < columns.length; i++) {
+        //   const col = columns[i];
+        //   col.scope = row * 4 + curSpan;
+        //   this.design.list.push(col);
+        //   if (curSpan + col.span == 4) {
+        //     row++;
+        //     curSpan = 0;
+        //   } else if (curSpan + col.span > 4) {
+        //     // 填充当前行
+        //     while (curSpan < 4) {
+        //       this.design.list.push({
+        //         span: 1,
+        //         empty: true,
+        //         scope: row * 4 + curSpan,
+        //       });
+        //       curSpan++;
+        //     }
+        //     row++;
+        //     col.scope = row * 4 + curSpan;
+        //     curSpan = col.span;
+        //   } else {
+        //     curSpan += col.span;
+        //   }
+        //   if (col.afterNewLine && curSpan != 0) {
+        //     while (curSpan < 4) {
+        //       this.design.list.push({
+        //         span: 1,
+        //         empty: true,
+        //         scope: row * 4 + curSpan,
+        //       });
+        //       curSpan++;
+        //       curSpan = 0;
+        //     }
+        //     row++;
+        //   }
+        // }
+        // let trow = row > 6 ? 6 : row;
+        // for (let i = trow; i < 7; i++) {
+        //   while (curSpan < 4) {
+        //     this.design.list.push({
+        //       span: 1,
+        //       empty: true,
+        //       scope: row * 4 + curSpan,
+        //     });
+        //     curSpan++;
+        //   }
+        //   curSpan = 0;
+        //   row++;
+        // }
+        // console.log("row:" + row);
       }
     },
   },
   methods: {
     async initData() {},
-    tryDrag() {
-      console.log("tryDrag");
+    tryDrag(ev, id) {
+      console.log("tryDrag", ev, id);
       this.drag.draging = true;
+      ev.dataTransfer.setData("controlId", id);
+      console.log(ev.dataTransfer);
     },
     tryDragend() {
       console.log("tryDragend");
       this.drag.draging = false;
+    },
+    tryDragover(ev, item) {
+      // console.log(item);
+      if (item.empty) {
+        ev.preventDefault();
+      }
+    },
+    tryDrop(ev, item) {
+      if (!item.empty) {
+        return;
+      }
+      let t = ev.dataTransfer.getData("controlId");
+      console.log("控件ID", t, item);
+      let newItem = { span: 2 };
+      let added = false;
+      for (let i = 0; i < this.design.list.length; i++) {
+        const e = this.design.list[i];
+        if (e.scope >= item.scope) {
+          this.design.list.splice(i, 0, newItem);
+          added = true;
+          break;
+        }
+      }
+      if (!added) {
+        this.design.list.push(newItem);
+      }
     },
     getDesignInfo() {},
   },
@@ -262,6 +333,10 @@ export default {
     height: 100%;
     background-color: #f7f7f7;
     .controlGroup {
+      margin-top: 2px;
+      box-shadow: 0 1px 1px 0 rgb(0 0 0 / 10%);
+      border: 1px solid #ebeef5;
+      padding: 2px;
       span {
         &:first-child {
           display: block;
