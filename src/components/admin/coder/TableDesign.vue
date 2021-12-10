@@ -31,9 +31,7 @@
       </div>
     </el-aside>
     <el-main style="padding: 0px">
-      <el-row>
-        表单设计
-      </el-row>
+      <el-row> 表单设计 </el-row>
       <el-row class="design-row" style="" v-for="(rowItem, idx) in designList" :key="idx">
         <template v-for="(item, idx2) in rowItem">
           <el-col :key="idx2" class="design-item" :span="item.span * 6">
@@ -47,11 +45,11 @@
     </el-main>
     <!-- 编辑详情页 -->
     <el-aside width="300px">
-      <el-tabs v-loading="loading" v-model="activeName" tabPosition="top">
+      <el-tabs v-model="detailActiveName" tabPosition="top">
         <el-tab-pane style="height: 100%" label="表详情" name="design">
           <el-card :body-style="{ padding: '10px' }">
             <div slot="header">
-              <span>表详情</span>
+              <span>基础数据</span>
             </div>
             <el-form
               ref="tableInfo"
@@ -76,7 +74,9 @@
             </el-form>
           </el-card>
         </el-tab-pane>
-        <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+        <el-tab-pane label="配置管理" name="second">
+          <div></div>
+        </el-tab-pane>
       </el-tabs>
     </el-aside>
   </el-container>
@@ -127,6 +127,8 @@ export default {
       drag: {
         draging: false,
       },
+      detailActiveName: "design",
+      selectedControls: null,
     };
   },
   computed: {
@@ -204,6 +206,13 @@ export default {
     },
     showControlsTemp() {
       return this.controls.templates != null && this.controls.templates.length > 0;
+    },
+    controlDetails() {
+      if (this.selectedControls == null) {
+        return this.design.list;
+      } else {
+        return [this.selectedControls];
+      }
     },
   },
   async mounted() {
@@ -284,10 +293,10 @@ export default {
   },
   methods: {
     async initData() {},
-    tryDrag(ev, id) {
-      console.log("tryDrag", ev, id);
+    tryDrag(ev, item) {
+      console.log("tryDrag", ev, JSON.stringify(item));
       this.drag.draging = true;
-      ev.dataTransfer.setData("controlId", id);
+      ev.dataTransfer.setData("controlId", JSON.stringify(item));
       console.log(ev.dataTransfer);
     },
     tryDragend() {
@@ -304,9 +313,9 @@ export default {
       if (!item.empty) {
         return;
       }
-      let t = ev.dataTransfer.getData("controlId");
-      console.log("控件ID", t, item);
-      let newItem = { span: 2 };
+      let dropItem = ev.dataTransfer.getData("controlId");
+      console.log("控件ID", dropItem, item);
+      let newItem = { span: 1 };
       let added = false;
       for (let i = 0; i < this.design.list.length; i++) {
         const e = this.design.list[i];
