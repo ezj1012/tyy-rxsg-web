@@ -90,17 +90,20 @@
           </ul>
         </el-row>
         <!-- 显示或隐藏菜单 -->
-        <el-button
+        <i
           class="table-list-show"
-          :icon="showTableList != '0' ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'"
+          :class="{
+            'el-icon-d-arrow-left': showTableList != '0',
+            'el-icon-d-arrow-right': showTableList == '0',
+          }"
           @click="
             () => {
               showTableList = showTableList == '0' ? '250px' : '0';
             }
           "
-        ></el-button>
+        ></i>
       </el-aside>
-      <el-main style="padding: 0px;height:100%">
+      <el-main style="padding: 0px; height: 100%">
         <Table :tableId="table.selectTable"></Table>
       </el-main>
     </el-container>
@@ -266,7 +269,7 @@ export default {
         let data = await queryTables(cdt);
         for (let i = 0; i < data.data.length; i++) {
           if (this.table.selectTable == null) {
-            this.doSelectTable(data.data[i].id)
+            this.doSelectTable(data.data[i].id);
           }
           this.table.list.push(data.data[i]);
         }
@@ -367,9 +370,16 @@ export default {
   }
   .table-list-show {
     position: absolute;
-    right: -40px;
+    right: -30px;
     top: 0px;
     z-index: 100;
+    font-size: 40px;
+    color: #9abcde;
+
+    &:hover {
+      font-size: 38px;
+      color: #aaa;
+    }
   }
 }
 </style>

@@ -36,3 +36,8 @@ export async function queryControls() {
   let t = await api.post(`${path}/queryControls`)
   return t.data
 }
+
+export async function updateTableInfo(params) {
+  let t = await api.post(`${path}/updateTableInfo`, params)
+  return t.data
+}

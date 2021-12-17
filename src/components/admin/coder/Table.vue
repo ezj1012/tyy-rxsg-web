@@ -10,7 +10,7 @@
 <script>
 import { getTableInfoById } from "@/api/coder.js";
 // import RxsgMain from "@/components/game/main";
-import TableDesign from "./TableDesign";
+import TableDesign from "./tableDesign/index";
 
 export default {
   name: "Table",
